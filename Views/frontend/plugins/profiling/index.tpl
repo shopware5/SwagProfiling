@@ -21,6 +21,7 @@
         <div class="cache bar-element"><span class="element-content">{$profiling.short.cacheFiles}x Cached files</span></div>
         <div class="php-info bar-element"><span class="element-content">{$profiling.short.php}</span></div>
         <div class="trace bar-element"><span class="element-content">{$profiling.trace|count}x Function calls</span></div>
+        <div class="memory bar-element"><span class="element-content">{$profiling.short.memory} MB</span></div>
         <div class="ajax bar-element"><span class="element-content">0</span>x Ajax requests</div>
 
         <div class="clear-cache"><span class="element-content">Clear cache</span>

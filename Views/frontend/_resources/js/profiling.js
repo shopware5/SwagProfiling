@@ -1,12 +1,11 @@
 //https://github.com/einars/js-beautify
-
-(function($) {
+(function ($) {
     /**
      * Helper function to trace all sended ajax request on the current page.
      * This function appends for each ajax request a new table with the ajax
      * data into the ajax-wrapper element.
      */
-    $(document).ajaxComplete(function(event, response, request) {
+    $(document).ajaxComplete(function (event, response, request) {
         var toolbar = $('.developer-bar'),
             details = $('.developer-bar-details'),
             ajaxTable = details.find('.ajax-wrapper'),
@@ -24,8 +23,8 @@
         item = item + getObjectAsTable(request);
         item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Response</td></tr>';
         item = item + getObjectAsTable(response);
-//        item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Event</td></tr>';
-//        item = item + getObjectAsTable(event);
+        //        item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Event</td></tr>';
+        //        item = item + getObjectAsTable(event);
 
         ajaxTable.append('<table>' + '<thead><th>Key</th><th style="width: 2000px;">Value</th></thead>' + '<tbody>' + item + '</tbody>' + '</table><div class="spacer"></div>');
 
@@ -36,16 +35,16 @@
      * @param object
      * @returns {string}
      */
-    var getObjectAsTable = function(object) {
-        var keys = $.map(object, function(value, key) {
+    var getObjectAsTable = function (object) {
+        var keys = $.map(object, function (value, key) {
             return key;
         });
         var item = '';
-        $.each(keys, function(index, key) {
+        $.each(keys, function (index, key) {
             var value = object[key];
             if (isFunction(value)) {
                 value = js_beautify(value.toString());
-                value = '<pre>'+value+'</pre>'
+                value = '<pre>' + value + '</pre>'
             }
             item = item + '<tr><td>' + key + '</td><td>' + value + '</td></tr>';
         });
@@ -60,10 +59,9 @@
 
 })(jQuery);
 
-/* Add class to the searchfield */
-(function($) {
-    $(document).ready(function() {
-        $('.developer-bar .bar-element').bind('click', function() {
+/* Add class to the searchfield */ (function ($) {
+    $(document).ready(function () {
+        $('.developer-bar .bar-element').bind('click', function () {
             $('#header').toggle();
             $('#wrapper').toggle();
             $('#footer_wrapper').toggle();
@@ -71,7 +69,7 @@
             $('html').css('background-image', 'none');
             $('.developer-bar-details').toggle();
         });
-        $('.developer-bar-details .close-button-wrapper').bind('click', function() {
+        $('.developer-bar-details .close-button-wrapper').bind('click', function () {
             $('#header').toggle();
             $('#wrapper').toggle();
             $('#footer_wrapper').toggle();
@@ -81,10 +79,9 @@
         });
     });
 
-    /* Add class to the searchfield */
-    (function($) {
-        $(document).ready(function() {
-            $('.developer-bar-details table .toggle').bind('click', function() {
+    /* Add class to the searchfield */ (function ($) {
+        $(document).ready(function () {
+            $('.developer-bar-details table .toggle').bind('click', function () {
                 var $this = $(this),
                     parent = $this.parents('tr'),
                     details = parent.next();
@@ -111,26 +108,26 @@
                 }
             });
 
-            $('.developer-bar .clear-cache').bind('click', function() {
+            $('.developer-bar .clear-cache').bind('click', function () {
                 var $this = $(this);
                 var url = $this.find('input[name=clear-cache-url]').val();
                 document.body.style.cursor = 'wait';
                 jQuery.ajax({
                     url: url,
                     type: 'POST',
-                    complete: function() {
+                    complete: function () {
                         document.body.style.cursor = 'default';
                         alert('Cache cleared!');
                     }
                 });
             });
 
-            $('.developer-bar-details table .toggle-all').bind('click', function() {
+            $('.developer-bar-details table .toggle-all').bind('click', function () {
                 var $this = $(this),
                     table = $this.parents('table'),
                     details = table.find('.details.collapsible');
 
-                details.each(function(index, detail) {
+                details.each(function (index, detail) {
                     detail = $(detail);
                     if (detail.hasClass('expanded')) {
                         detail.hide();
@@ -142,7 +139,7 @@
                 });
             });
 
-            $('.array-wrapper .btn.toggle').bind('click', function() {
+            $('.array-wrapper .btn.toggle').bind('click', function () {
                 var $this = $(this),
                     item = $this.parents('.item.array'),
                     detail = item.find('.array-wrapper');
@@ -159,7 +156,7 @@
                 }
             });
 
-            $('.developer-bar-details .developer-content .navigation li a').bind('click', function(event) {
+            $('.developer-bar-details .developer-content .navigation li a').bind('click', function (event) {
                 var $this = $(this),
                     li = $this.parents('li'),
                     key = '.developer-bar-details .element-content' + $this.attr('href').replace('#', '.'),
@@ -169,7 +166,7 @@
 
                 //remove active class of all navigation items
                 var listItems = $('.developer-bar-details .developer-content .navigation li');
-                listItems.each(function(index, item) {
+                listItems.each(function (index, item) {
                     $(item).removeClass('active');
                 });
 
@@ -180,7 +177,7 @@
                 //display the new active items
                 $(li).addClass('active');
 
-                currentContent.fadeOut('fast', function() {
+                currentContent.fadeOut('fast', function () {
                     newActive.fadeIn('fast');
                     newActive.addClass('active');
                 });

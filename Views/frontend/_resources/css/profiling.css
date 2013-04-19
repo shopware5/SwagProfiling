@@ -16,6 +16,7 @@
 .developer-bar .cache.bar-element { background:url(../img/drive_magnify.png) no-repeat left center; }
 .developer-bar .exception.bar-element { background:url(../img/bug.png) no-repeat left center; }
 .developer-bar .trace.bar-element { background:url(../img/report.png) no-repeat left center; }
+.developer-bar .memory.bar-element { background:url(../img/server_compressed.png) no-repeat left center; }
 .developer-bar .ajax.bar-element { background:url(../img/ipod_cast.png) no-repeat left center; }
 .developer-bar .ajax .element-content { padding-right:0;  border-right:none; }
 .developer-bar .query-warnings { background:url(../img/chart_curve_error.png) no-repeat left center;  display:inline-block;  padding-left:20px;  margin-right:10px; }
