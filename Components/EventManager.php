@@ -63,12 +63,14 @@ class EventManager extends Enlight_Event_EventManager {
         $listeners = $this->listeners[$event];
 
         if (!is_array($listeners)) {
+            $this->listeners[$event] = $additional;
             return $additional;
         }
 
         array_unshift($listeners, $additional[0]);
         $listeners[] = $additional[1];
 
+         $this->listeners[$event] = $listeners;
         return $listeners;
     }
 }
