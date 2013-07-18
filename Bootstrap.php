@@ -183,7 +183,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $queries = array_merge($sqlQueries, $doctrineQueries);
         $events = $this->getEvents();
         $exceptions = Shopware()->Front()->Response()->getException();
-
         $loader = $this->Application()->Loader();
         $classMap = $this->Application()->AppPath('Proxies') . 'ClassMap.php';
         $loader->readClassMap($classMap);

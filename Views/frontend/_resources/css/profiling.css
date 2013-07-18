@@ -205,3 +205,15 @@
 .developer-bar-details .queries .query-warning { background:#f8f8f8; }
 .developer-bar-details .queries .query-success { background:#f8f8f8; }
 .developer-bar-details .queries .query-error { background:#f8f8f8; }
+
+
+/******************** Query listing *********************/
+.developer-bar-details .mail-wrapper .mail-content td:first-child { padding: 50px 0; }
+.developer-bar-details .mail-wrapper .mail-content td:first-child table td { padding: 10px; }
+
+.developer-bar-details .mail-wrapper .mail-content td:first-child div:first-child {
+    padding: 50px 30px;
+    box-shadow: 0 0 10px 0 #cdcdcd;
+    width: 600px;
+}
+
