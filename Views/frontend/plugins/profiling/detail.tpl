@@ -1,13 +1,8 @@
 
 <div class="developer-bar-details">
     <div class="developer-header">
-
-        <img class="developer-logo" src="{link file='frontend/_resources/img/shopware_logo.jpg'}"
-             width="397" height="79">
-
-        <div class="close-button-wrapper">
-            <a class="close-button" href="#"><span class="button-text">Display store front</span></a>
-        </div>
+        <img class="developer-logo" src="{link file='frontend/_resources/img/shopware-dev-toolbar.png'}" width="291" height="28">
+        <a class="close-button" href="#"><span class="button-text">Display <strong>storefront</strong></span></a>
     </div>
     <div class="developer-content">
         <div class="navigation">
@@ -16,7 +11,6 @@
                 <li class="request"><a href="#request">Request</a></li>
                 <li class="session"><a href="#session">Session</a></li>
                 <li class="template"><a href="#template">Template</a></li>
-
                 <li class="events"><a href="#events">Events</a></li>
                 <li class="queries"><a href="#queries">Queries</a></li>
                 <li class="emails"><a href="#emails">Emails</a></li>
@@ -79,13 +73,12 @@
                 {include file="frontend/plugins/profiling/details/trace.tpl"}
             </div>
 
-
             <div class="ajax element-content">
                 {include file="frontend/plugins/profiling/details/ajax.tpl"}
             </div>
 
             <div class="php-info element-content">
-                <Iframe src="{url controller=detail action=getPhpInfo}" width="100%" height="1400"></Iframe>
+                <iframe src="{url controller=detail action=getPhpInfo}" width="800" scrolling="no" id="phpFrame"></iframe>
             </div>
         </div>
     </div>

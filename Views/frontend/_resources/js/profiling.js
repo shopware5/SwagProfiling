@@ -18,12 +18,12 @@
         toolbarContent.html(counter);
 
         var currentDate = new Date();
-        item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Request</td></tr>';
+        item = item + '<tr><td colspan="2" class="sub-head">Request</td></tr>';
         item = item + '<tr><td>Time</td><td>' + currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds() + '</td></tr>';
         item = item + getObjectAsTable(request);
-        item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Response</td></tr>';
+        item = item + '<tr><td colspan="2" class="sub-head">Response</td></tr>';
         item = item + getObjectAsTable(response);
-        //        item = item + '<tr style="background: #999"><td colspan="2" style="color: #fff; font-weight: 700 !important; font-size: 16px !important;">Event</td></tr>';
+        //        item = item + '<tr style="background: #999"><td colspan="2" class="sub-head">Event</td></tr>';
         //        item = item + getObjectAsTable(event);
 
         ajaxTable.append('<table>' + '<thead><th>Key</th><th style="width: 2000px;">Value</th></thead>' + '<tbody>' + item + '</tbody>' + '</table><div class="spacer"></div>');
@@ -69,14 +69,16 @@
             $('html').css('background-image', 'none');
             $('.developer-bar-details').toggle();
         });
-        $('.developer-bar-details .close-button-wrapper').bind('click', function () {
+        $('.developer-bar-details .close-button').bind('click', function () {
             $('#header').toggle();
             $('#wrapper').toggle();
             $('#footer_wrapper').toggle();
             $('#compare_bigbox').toggle();
             $('html').css('background-image', 'none');
             $('.developer-bar-details').toggle();
+            return false;
         });
+
     });
 
     /* Add class to the searchfield */ (function ($) {
@@ -178,7 +180,16 @@
                 $(li).addClass('active');
 
                 currentContent.fadeOut('fast', function () {
-                    newActive.fadeIn('fast');
+                    newActive.fadeIn('fast', function() {
+
+                        // Set PHP info frame to correct height
+                        var frame = document.getElementById('phpFrame'),
+                            frameBody = frame.contentWindow.document.body,
+                            frameHeight = frameBody.offsetHeight;
+
+                        frame.style.height = frameHeight + 'px';
+
+                    });
                     newActive.addClass('active');
                 });
             });

@@ -18,7 +18,6 @@
                         {/foreach}
                     </ul>
                 </div>
-                <div class="clear"></div>
 
                 <div class="item-returns">
                     <div class="event-params">
@@ -33,7 +32,6 @@
                         <p class="returns-headline">After-Listener-Triggered</p>
                         {include file="frontend/plugins/profiling/details/array.tpl" array=$event.returns.1}
                     </div>
-                    <div class="clear"></div>
                 </div>
 
             </div>
