@@ -1,10 +1,41 @@
 <?php
+/**
+ * Shopware 4.0
+ * Copyright © 2012 shopware AG
+ *
+ * According to our dual licensing model, this program can be used either
+ * under the terms of the GNU Affero General Public License, version 3,
+ * or under a proprietary license.
+ *
+ * The texts of the GNU Affero General Public License with an additional
+ * permission and of our proprietary license can be found at and
+ * in the LICENSE file you have received along with this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * "Shopware" is a registered trademark of shopware AG.
+ * The licensing of the program under the AGPLv3 does not imply a
+ * trademark license. Therefore any rights, title and interest in
+ * our trademarks remain entirely with us.
+ */
 
 require_once(__DIR__ . '/Components/SqlFormatter.php');
 require_once(__DIR__ . '/Components/EventManager.php');
 
-use \Doctrine\DBAL\Logging\EchoSQLLogger;
-
+/**
+ * Class Shopware_Plugins_Frontend_Profiling_Bootstrap
+ * This is the bootstrap class of the developer toolbar plugin.
+ * This class bootstraps the plugin. The install function registers
+ * all necessary events to collect the different profiling data and display
+ * them in the store front.
+ *
+ * @category  Shopware
+ * @package   Shopware\Plugins\Profiling
+ * @copyright Copyright (c) 2012, shopware AG (http://www.shopware.de)
+ */
 class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**
@@ -51,8 +82,32 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      */
     public function getLabel()
     {
-        return 'Profiling';
+        return 'Shopware Developer Toolbar';
     }
+
+    /**
+     * Returns all information about this plugin.
+     * This information will be displayed in the plugin manager detail page
+     * of a single plugin.
+     * @return array
+     */
+    public function getInfo()
+    {
+        return array(
+            'version' => $this->getVersion(),
+            'label' => $this->getLabel()
+        );
+    }
+
+    /**
+     * Returns the current plugin version
+     * @return string
+     */
+    public function getVersion()
+    {
+        return '1.0.0';
+    }
+
 
     /**
      * Registers all necessary events and the plugin configuration.
@@ -101,7 +156,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      *
      * @param Enlight_Event_EventArgs $args
      */
-    public function onSendMail(Enlight_Event_EventArgs $args) {
+    public function onSendMail(Enlight_Event_EventArgs $args)
+    {
         $this->mails[] = $args->getMail();
     }
 
@@ -116,7 +172,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         //check ip configuration.
         if (!empty($_SERVER["REMOTE_ADDR"])
             && !empty($this->Config()->ipLimitation)
-            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"])===false){
+            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"]) === false
+        ) {
             return;
         }
 
@@ -145,20 +202,22 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     {
         if (!empty($_SERVER["REMOTE_ADDR"])
             && !empty($this->Config()->ipLimitation)
-            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"])===false){
-            return;
+            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"]) === false
+        ) {
+            return $arguments->getReturn();
         }
 
         /**@var $controller Shopware_Controllers_Frontend_Index */
         $controller = $arguments->getSubject();
         $request = $controller->Request();
 
-        /**@var $view Enlight_View_Default*/
+        /**@var $view Enlight_View_Default */
         $view = $arguments->getSubject()->View();
 
         if ($request->getModuleName() !== 'frontend'
-            || !$view->hasTemplate()) {
-            return false;
+            || !$view->hasTemplate()
+        ) {
+            return $arguments->getReturn();
         }
 
         $view->addTemplateDir($this->Path() . 'Views/');
@@ -187,7 +246,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $classMap = $this->Application()->AppPath('Proxies') . 'ClassMap.php';
         $loader->readClassMap($classMap);
 
-        $data =  array(
+        $data = array(
             'request' => $this->getRequestData(),
             'response' => $this->getResponseData(),
             'session' => $this->getSessionData(),
@@ -216,7 +275,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
             'mails' => count($data['mails']),
             'cacheFiles' => count($data['cache']['metaData']),
             'php' => phpversion(),
-            'memory' => memory_get_usage()  / 1024 / 1024,
+            'memory' => memory_get_usage() / 1024 / 1024,
             'templates' => count($data['template']['Loaded templates'])
         );
         return $data;
@@ -227,8 +286,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param $exception
      * @return array
      */
-    private function getExceptionData($exception) {
-
+    private function getExceptionData($exception)
+    {
         if (!$exception instanceof Exception) {
             return array();
         }
@@ -247,8 +306,9 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * Internal helper function which returns all relevant cache data
      * of the current request.
      */
-    private function getCacheData() {
-        /**@var $cache Zend_Cache_Core*/
+    private function getCacheData()
+    {
+        /**@var $cache Zend_Cache_Core */
         $cache = Shopware()->Cache();
         $data = array(
             'metaData' => array(),
@@ -256,12 +316,22 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
                 'percentage' => $cache->getFillingPercentage()
             ),
         );
-        $options = array('write_control','caching','cache_id_prefix','automatic_serialization','automatic_cleaning_factor','lifetime','logging','logger','ignore_user_abort');
-        foreach($options as $option) {
+        $options = array(
+            'write_control',
+            'caching',
+            'cache_id_prefix',
+            'automatic_serialization',
+            'automatic_cleaning_factor',
+            'lifetime',
+            'logging',
+            'logger',
+            'ignore_user_abort'
+        );
+        foreach ($options as $option) {
             $data['options'][$option] = $cache->getOption($option);
         }
 
-        foreach($cache->getIds() as $id) {
+        foreach ($cache->getIds() as $id) {
             $metaData = $cache->getMetadatas($id);
             $createdAt = date('Y-m-d H:i:s', $metaData['mtime']);
             $validTo = date('Y-m-d H:i:s', $metaData['expire']);
@@ -289,10 +359,11 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      *
      * @return array
      */
-    private function getMails() {
+    private function getMails()
+    {
         $data = array();
         /**@var $mail Enlight_Components_Mail */
-        foreach($this->mails as $mail) {
+        foreach ($this->mails as $mail) {
             $data[] = array(
                 'information' => array(
                     'From' => $mail->getFrom(),
@@ -313,7 +384,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
                     'Mime boundary' => $mail->getMimeBoundary(),
                     'Part count' => $mail->getPartCount(),
                     'Parts' => $mail->getParts(),
-
                     'Type' => $mail->getType(),
                 ),
                 'content' => $mail->getPlainBody()
@@ -329,9 +399,10 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param Enlight_Event_EventArgs $arguments
      * @return array
      */
-    private function getTemplateData(Enlight_Event_EventArgs $arguments) {
+    private function getTemplateData(Enlight_Event_EventArgs $arguments)
+    {
         $template = Shopware()->Template();
-        /**@var $view Enlight_View_Default*/
+        /**@var $view Enlight_View_Default */
         $view = $arguments->getSubject()->View();
         $viewTemplate = $view->Template();
 
@@ -407,10 +478,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     }
 
 
-
-
-
-
     /**
      * Helper function to add two new event listeners for the passed
      * event. This is used to log all fired request events.
@@ -418,7 +485,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param $event
      * @return array
      */
-    public function getAdditionalListeners($event) {
+    public function getAdditionalListeners($event)
+    {
         return array(
             new Enlight_Event_Handler_Default($event, array($this, 'onEvent'), -1000),
             new Enlight_Event_Handler_Default($event, array($this, 'onEvent'), 1000)
@@ -434,7 +502,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     public function onEvent(Enlight_Event_EventArgs $args)
     {
         if ($this->preventEventLog) {
-            return;
+            return $args->getReturn();
         }
 
         $event = $args->getName();
@@ -448,8 +516,9 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * Helper function to get all traced events as array data.
      * @return mixed
      */
-    private function getEvents() {
-        foreach($this->events as &$event) {
+    private function getEvents()
+    {
+        foreach ($this->events as &$event) {
             $event['duration'] = round($event['time'][1] - $event['time'][0], 5);
         }
         return $this->events;
@@ -464,21 +533,22 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param array $listeners
      * @param null $eventArgs Enlight_Event_EventArgs
      */
-    public function addEvent($event, $type = '', $listeners = array(), $eventArgs = null) {
+    public function addEvent($event, $type = '', $listeners = array(), $eventArgs = null)
+    {
         if ($this->preventEventLog) {
             return;
         }
         if (!array_key_exists($event, $this->events)) {
             $data = array();
-            /**@var $listener Enlight_Event_Handler_Default*/
-            foreach($listeners as $listener) {
+            /**@var $listener Enlight_Event_Handler_Default */
+            foreach ($listeners as $listener) {
 
                 $temp = $listener->getListener();
                 if (is_array($temp)) {
                     $class = get_class($temp[0]);
                     $function = $temp[1];
                 } else {
-                    /**@var $listener Enlight_Event_Handler_Plugin*/
+                    /**@var $listener Enlight_Event_Handler_Plugin */
                     $class = $listener->Plugin()->getClassName();
                     $function = $listener->getListener();
                 }
@@ -495,10 +565,10 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
                 );
             }
 
-            /**@var $eventArgs Enlight_Event_EventArgs*/
+            /**@var $eventArgs Enlight_Event_EventArgs */
             $params = array();
             if ($eventArgs instanceof Enlight_Event_EventArgs) {
-                foreach($eventArgs->getIterator() as $key => $value) {
+                foreach ($eventArgs->getIterator() as $key => $value) {
                     if (is_object($value) || is_array($value)) {
                         $params[$key] = get_class($value);
                     } else {
@@ -506,7 +576,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
                     }
                 }
             } elseif (is_array($eventArgs)) {
-                foreach($eventArgs as $key => $value) {
+                foreach ($eventArgs as $key => $value) {
                     if (is_object($value) || is_array($value)) {
                         $params[$key] = get_class($value);
                     } else {
@@ -525,23 +595,20 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     }
 
 
-
-    /***************QUERY TRACING FUNCTIONS*******************************/
-    /*********************************************************************/
-
     /**
      * Internal helper function which returns all traced plain sql queries
      * which executed over the Shopware()->Db() object.
      *
      * @return array
      */
-    private function getSqlQueries() {
+    private function getSqlQueries()
+    {
         $profiler = Shopware()->Db()->getProfiler();
         $queries = array();
         /**@var $query Zend_Db_Profiler_Query* */
         foreach ($profiler->getQueryProfiles() as $query) {
             $explain = $this->getSqlExplain($query->getQuery(), $query->getQueryParams());
-            $sql = $this->getQuerySql($query->getQuery(), $query->getQueryParams());
+            $sql = $this->getQuerySql($query->getQuery());
 
             if (strpos($sql, '-- IGNORE PROFILING') !== false) {
                 continue;
@@ -565,14 +632,15 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * which executed over the Shopware()->Models() manager.
      * @return array
      */
-    private function getDoctrineQueries() {
+    private function getDoctrineQueries()
+    {
         $queries = array();
 
         /**@var $logger \Doctrine\DBAL\Logging\DebugStack */
         $logger = Shopware()->Models()->getConfiguration()->getSQLLogger();
         foreach ($logger->queries as $query) {
             $explain = $this->getSqlExplain($query['sql'], $query['params']);
-            $sql = $this->getQuerySql($query['sql'], $query['params']);
+            $sql = $this->getQuerySql($query['sql']);
 
             $this->sqlTime += $query['executionMS'];
 
@@ -593,7 +661,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param $sql
      * @return string
      */
-    private function getShortSql($sql) {
+    private function getShortSql($sql)
+    {
         $fromPos = strrpos($sql, 'FROM');
         if ($fromPos !== false) {
             return substr($sql, 0, 40) . ' ... <br>' . substr($sql, $fromPos, 80);
@@ -607,10 +676,10 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * This functions trims all line feats and replace them with a space.
      *
      * @param $sql
-     * @param $params
      * @return string
      */
-    private function getQuerySql($sql, $params) {
+    private function getQuerySql($sql)
+    {
         $sql = trim(preg_replace('/\s+/', ' ', $sql));
         return $sql;
     }
@@ -697,13 +766,10 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      * @param $sql
      * @return String
      */
-    public function formatSql($sql) {
+    public function formatSql($sql)
+    {
         return SqlFormatter::format($sql);
     }
-
-
-
-
 
 
     /**
@@ -717,19 +783,14 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
 
         if (!empty($_SERVER["REMOTE_ADDR"])
             && !empty($this->Config()->ipLimitation)
-            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"])===false){
+            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"]) === false
+        ) {
             return;
         }
 
         echo phpinfo();
         exit();
     }
-
-
-
-
-
-
 
 
     /**
@@ -743,7 +804,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
 
         if (!empty($_SERVER["REMOTE_ADDR"])
             && !empty($this->Config()->ipLimitation)
-            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"])===false){
+            && strpos($this->Config()->ipLimitation, $_SERVER["REMOTE_ADDR"]) === false
+        ) {
             return;
         }
 
@@ -754,39 +816,80 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $this->clearRewriteCache();
         $this->clearFrontendCache($arguments->getSubject()->Request());
         $this->clearProxyCache();
+        $this->clearConfigCache();
         exit();
     }
 
     /**
-     * Helper function to clear the caches
+     * Clear search cache
+     */
+    protected function clearConfigCache()
+    {
+        Shopware()->Cache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, array(
+            'Shopware_Config', 'Shopware_Plugin'
+        ));
+    }
+
+    /**
+     * Clear proxy cache
+     *
+     * Clears:
+     * - Shopware Proxies
+     * - Classmap
+     * - Doctrine-Proxies
+     * - Doctrine-Anotations
+     * - Doctrine-Metadata
      */
     protected function clearProxyCache()
     {
         $configuration = Shopware()->Models()->getConfiguration();
         $metaDataCache = $configuration->getMetadataCacheImpl();
-        if(method_exists($metaDataCache, 'deleteAll')) {
+        if (method_exists($metaDataCache, 'deleteAll')) {
             $metaDataCache->deleteAll();
         }
 
-        $dir = Shopware()->AppPath('Proxies');
-        $files = glob($dir . '*.php');
-        foreach ($files as $file) {
-            if(strpos($file, '__' . Shopware::REVISION . '__') === false) {
-                unlink($file);
-            }
+        // Clear Shopware Proxies
+        Shopware()->Hooks()->getProxyFactory()->clearCache();
+
+        // Clear classmap
+        $classMap = Shopware()->Hooks()->getProxyFactory()->getProxyDir() . 'ClassMap_' . \Shopware::REVISION . '.php';
+        @unlink($classMap);
+
+        // Clear Doctrine Proxies
+        $files = new GlobIterator(
+            $configuration->getProxyDir() . '*.php',
+            FilesystemIterator::CURRENT_AS_PATHNAME
+        );
+
+        foreach ($files as $filePath) {
+            @unlink($filePath);
+        }
+
+        // Clear Anotation file cache
+        $files = new GlobIterator(
+            $configuration->getFileCacheDir() . '*.php',
+            FilesystemIterator::CURRENT_AS_PATHNAME
+        );
+
+        foreach ($files as $filePath) {
+            @unlink($filePath);
         }
     }
 
     /**
      * Helper function to clear the caches
      */
-    private function clearFrontendCache($request) {
+    private function clearFrontendCache($request)
+    {
+        $request = $this->Request();
         if ($request->getHeader('Surrogate-Capability') === false) {
             return true;
         }
+
         $proxyUrl = $request->getScheme() . '://'
             . $request->getHttpHost()
             . $request->getBaseUrl() . '/';
+
         try {
             $client = new Zend_Http_Client(null, array(
                 'useragent' => 'Shopware/' . Shopware()->Config()->version,
@@ -796,6 +899,13 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         } catch (Exception $e) {
             return false;
         }
+
+        try {
+            Shopware()->Db()->exec('TRUNCATE s_cache_log');
+        } catch (\Exeption $e) {
+            Shopware()->Db()->exec('DELETE FROM s_cache_log');
+        }
+
         return true;
     }
 
@@ -804,7 +914,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      */
     protected function clearSearchCache()
     {
-        $sql = "SELECT id FROM s_core_config_elements WHERE name LIKE 'fuzzysearchlastupdate'";
+        $sql = "SELECT `id` FROM `s_core_config_elements` WHERE `name` LIKE 'fuzzysearchlastupdate'";
         $elementId = Shopware()->Db()->fetchOne($sql);
 
         $sql = 'DELETE FROM s_core_config_values WHERE element_id=?';
@@ -819,7 +929,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $cache = (int)Shopware()->Config()->routerCache;
         $cache = $cache < 360 ? 86400 : $cache;
 
-        $sql = "SELECT id FROM s_core_config_elements WHERE name LIKE 'routerlastupdate'";
+        $sql = "SELECT `id` FROM `s_core_config_elements` WHERE `name` LIKE 'routerlastupdate'";
         $elementId = Shopware()->Db()->fetchOne($sql);
 
         $sql = "
