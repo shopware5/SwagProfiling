@@ -95,7 +95,8 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     {
         return array(
             'version' => $this->getVersion(),
-            'label' => $this->getLabel()
+            'label' => $this->getLabel(),
+            'description' => file_get_contents(__DIR__ . '/description.txt')
         );
     }
 
