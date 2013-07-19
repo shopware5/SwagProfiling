@@ -244,7 +244,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $events = $this->getEvents();
         $exceptions = Shopware()->Front()->Response()->getException();
         $loader = $this->Application()->Loader();
-        $classMap = $this->Application()->AppPath('Proxies') . 'ClassMap.php';
+        $classMap = Shopware()->Hooks()->getProxyFactory()->getProxyDir() . 'ClassMap_' . \Shopware::REVISION . '.php';
         $loader->readClassMap($classMap);
 
         $data = array(
@@ -442,7 +442,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
     private function getRequestData()
     {
         $request = Shopware()->Front()->Request();
-
         return array(
             'Class' => get_class($request),
             'Module' => $request->getModuleName(),
@@ -458,7 +457,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
             'Parameters' => $request->getParams(),
             'Path information' => $request->getPathInfo(),
             'Base path' => $request->getBasePath(),
-            'Header' => apache_request_headers()
+            'Header' => (function_exists('getallheaders')) ? getallheaders() : array(),
         );
     }
 
