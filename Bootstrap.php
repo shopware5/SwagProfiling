@@ -882,7 +882,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      */
     private function clearFrontendCache($request)
     {
-        $request = $this->Request();
         if ($request->getHeader('Surrogate-Capability') === false) {
             return true;
         }

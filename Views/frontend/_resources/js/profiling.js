@@ -182,12 +182,15 @@
                 currentContent.fadeOut('fast', function () {
                     newActive.fadeIn('fast', function() {
 
-                        // Set PHP info frame to correct height
-                        var frame = document.getElementById('phpFrame'),
-                            frameBody = frame.contentWindow.document.body,
-                            frameHeight = frameBody.offsetHeight;
+                        try { // Set PHP info frame to correct height
+                            var frame = document.getElementById('phpFrame'),
+                                frameBody = frame.contentWindow.document.body,
+                                frameHeight = frameBody.offsetHeight;
 
-                        frame.style.height = frameHeight + 'px';
+                            frame.style.height = frameHeight + 'px';
+                        } catch (e) {
+
+                        }
 
                     });
                     newActive.addClass('active');
