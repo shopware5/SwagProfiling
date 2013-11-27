@@ -59,18 +59,11 @@ class EventManager extends Enlight_Event_EventManager {
     }
 
     public function getListeners($event) {
-        $additional = $this->getPluginBootstrap()->getAdditionalListeners($event);
-        $listeners = $this->listeners[$event];
+        $additionalEventListeners = $this->getPluginBootstrap()->getAdditionalListeners($event);
 
-        if (!is_array($listeners)) {
-            $this->listeners[$event] = $additional;
-            return $additional;
+        foreach($additionalEventListeners as $additionalEventListener) {
+            $this->registerListener($additionalEventListener);
         }
-
-        array_unshift($listeners, $additional[0]);
-        $listeners[] = $additional[1];
-
-         $this->listeners[$event] = $listeners;
-        return $listeners;
+        return parent::getListeners($event);
     }
 }
