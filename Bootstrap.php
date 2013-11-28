@@ -1,4 +1,4 @@
-<?php
+2<?php
 /**
  * Shopware 4.0
  * Copyright © 2012 shopware AG
@@ -106,7 +106,7 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      */
     public function getVersion()
     {
-        return '1.0.0';
+        return '1.0.1';
     }
 
 
