@@ -1,4 +1,4 @@
-2<?php
+<?php
 /**
  * Shopware 4.0
  * Copyright © 2012 shopware AG
