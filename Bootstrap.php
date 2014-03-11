@@ -245,7 +245,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
         $exceptions = Shopware()->Front()->Response()->getException();
         $loader = $this->Application()->Loader();
         $classMap = Shopware()->Hooks()->getProxyFactory()->getProxyDir() . 'ClassMap_' . \Shopware::REVISION . '.php';
-        $loader->readClassMap($classMap);
 
         $data = array(
             'request' => $this->getRequestData(),
@@ -260,7 +259,6 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
             'mails' => $this->getMails(),
             'cache' => $this->getCacheData(),
             'exception' => $this->getExceptionData($exceptions[0]),
-            'classMap' => $loader->getClassMap(),
             'trace' => debug_backtrace()
         );
 
