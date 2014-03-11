@@ -17,7 +17,6 @@
                 <li class="dev-basket"><a href="#dev-basket">Basket</a></li>
                 <li class="cache"><a href="#cache">Cache</a></li>
                 <li class="exception"><a href="#exception">Exception</a></li>
-                <li class="class-map"><a href="#class-map">Class map</a></li>
                 <li class="php-info"><a href="#php-info">PHP</a></li>
                 <li class="trace"><a href="#trace">Trace</a></li>
                 <li class="ajax"><a href="#ajax">Ajax Requests</a></li>
