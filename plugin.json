@@ -1,0 +1,14 @@
+{
+    "currentVersion": "1.0.1",
+
+    "changelogs": {
+       "1.0.1": "Add compatibility with shopware 4.2 DIC"
+    },
+
+    "compatibility": {
+        "minimumVersion": "4.1.0",
+        "maximumVersion": null,
+        "blacklist": [
+        ]
+    }
+}

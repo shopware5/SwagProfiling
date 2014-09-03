@@ -36,7 +36,7 @@ require_once(__DIR__ . '/Components/EventManager.php');
  * @package   Shopware\Plugins\Profiling
  * @copyright Copyright (c) 2012, shopware AG (http://www.shopware.de)
  */
-class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_Plugin_Bootstrap
+class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**
      * Internal array which contains all fired events for a single request.
@@ -106,7 +106,14 @@ class Shopware_Plugins_Frontend_Profiling_Bootstrap extends Shopware_Components_
      */
     public function getVersion()
     {
-        return '1.0.1';
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR .'plugin.json'), true);
+
+        if ($info) {
+            return $info['currentVersion'];
+        } else {
+            throw new Exception('The plugin has an invalid version file.');
+        }
+
     }
 
 
