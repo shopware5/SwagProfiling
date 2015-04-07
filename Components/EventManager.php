@@ -6,7 +6,7 @@ class EventManager extends Enlight_Event_EventManager {
      * @return Shopware_Plugins_Frontend_Profiling_Bootstrap
      */
     protected function getPluginBootstrap() {
-        return Shopware()->Plugins()->Frontend()->Profiling();
+        return Shopware()->Plugins()->Frontend()->SwagProfiling();
     }
 
     /**

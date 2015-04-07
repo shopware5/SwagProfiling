@@ -229,7 +229,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         }
 
         $view->addTemplateDir($this->Path() . 'Views/');
-        $view->extendsTemplate('frontend/plugins/profiling/index.tpl');
+        $view->extendsTemplate('frontend/plugins/swag_profiling/index.tpl');
         $this->preventEventLog = true;
         $view->assign('profiling', $this->getProfiling($arguments));
         $this->preventEventLog = false;
