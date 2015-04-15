@@ -1,14 +1,27 @@
 {
-    "currentVersion": "1.0.1",
-
-    "changelogs": {
-       "1.0.1": "Add compatibility with shopware 4.2 DIC"
+  "label": {
+    "de": "Profiling",
+    "en": "Profiling"
+  },
+  "copyright": "(c) by shopware AG",
+  "license": "proprietary",
+  "link": "http://store.shopware.com",
+  "author": "shopware AG",
+  "currentVersion": "1.0.2",
+  "changelog": {
+    "de": {
+        "1.0.2": "PT-2932 - SW5 Kompatiblität",
+        "1.0.1": "Add compatibility with shopware 4.2 DIC"
     },
-
-    "compatibility": {
-        "minimumVersion": "4.1.0",
-        "maximumVersion": null,
-        "blacklist": [
-        ]
+    "en": {
+        "1.0.2": "PT-2932 - SW5 compatibility",
+        "1.0.1": "Add compatibility with shopware 4.2 DIC"
     }
+  },
+  "compatibility": {
+    "minimumVersion": "4.1.0",
+    "maximumVersion": null,
+    "blacklist": [
+    ]
+  }
 }
