@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Models\Config\Form;
+
 require_once(__DIR__ . '/Components/SqlFormatter.php');
 require_once(__DIR__ . '/Components/EventManager.php');
 
@@ -40,6 +42,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 {
     /**
      * Internal array which contains all fired events for a single request.
+     *
      * @var array
      */
     public $events = array();
@@ -51,12 +54,14 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Total time of all queries
+     *
      * @var int
      */
     protected $sqlTime = 0;
 
     /**
      * Counter of executed event listeners
+     *
      * @var int
      */
     protected $listenerCount = 0;
@@ -72,12 +77,14 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
     /**
      * Helper property which counts the
      * slow queries of the current request.
+     *
      * @var int
      */
     protected $slowQueryCounter = 0;
 
     /**
      * Returns the displayed label for this plugin.
+     *
      * @return string
      */
     public function getLabel()
@@ -89,6 +96,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
      * Returns all information about this plugin.
      * This information will be displayed in the plugin manager detail page
      * of a single plugin.
+     *
      * @return array
      */
     public function getInfo()
@@ -102,28 +110,31 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Returns the current plugin version
+     *
      * @return string
+     * @throws Exception
      */
     public function getVersion()
     {
-        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR .'plugin.json'), true);
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
 
         if ($info) {
             return $info['currentVersion'];
         } else {
             throw new Exception('The plugin has an invalid version file.');
         }
-
     }
 
 
     /**
      * Registers all necessary events and the plugin configuration.
+     *
      * @return bool
      */
     public function install()
     {
         $form = $this->Form();
+        /* @var Form $parent */
         $parent = $this->Forms()->findOneBy(array('name' => 'Core'));
         $form->setParent($parent);
         $form->setElement('text', 'ipLimitation', array('label' => 'Auf IP beschränken', 'value' => ''));
@@ -222,9 +233,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         /**@var $view Enlight_View_Default */
         $view = $arguments->getSubject()->View();
 
-        if ($request->getModuleName() !== 'frontend'
-            || !$view->hasTemplate()
-        ) {
+        if ($request->getModuleName() !== 'frontend' || !$view->hasTemplate()) {
             return $arguments->getReturn();
         }
 
@@ -284,11 +293,13 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             'memory' => memory_get_usage() / 1024 / 1024,
             'templates' => count($data['template']['Loaded templates'])
         );
+
         return $data;
     }
 
     /**
      * Helper function to get the exception data as array.
+     *
      * @param $exception
      * @return array
      */
@@ -298,6 +309,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             return array();
         }
         $previousData = $this->getExceptionData($exception->getPrevious());
+
         return array(
             'Code' => $exception->getCode(),
             'Message' => $exception->getMessage(),
@@ -395,6 +407,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                 'content' => $mail->getPlainBody()
             );
         }
+
         return $data;
     }
 
@@ -429,6 +442,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Internal helper function which returns all shopware data.
+     *
      * @return array
      */
     private function getSessionData()
@@ -436,17 +450,20 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         $session = Shopware()->Session();
         $sessionData = $session->getIterator()->getArrayCopy();
         $sessionData['id'] = Shopware()->SessionID();
+
         return $sessionData;
     }
 
     /**
      * Internal helper function which returns the whole request data
      * as array.
+     *
      * @return array
      */
     private function getRequestData()
     {
         $request = Shopware()->Front()->Request();
+
         return array(
             'Class' => get_class($request),
             'Module' => $request->getModuleName(),
@@ -468,6 +485,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Internal helper function which returns the response data as array.
+     *
      * @return array
      */
     private function getResponseData()
@@ -519,6 +537,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Helper function to get all traced events as array data.
+     *
      * @return mixed
      */
     private function getEvents()
@@ -526,6 +545,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         foreach ($this->events as &$event) {
             $event['duration'] = round($event['time'][1] - $event['time'][0], 5);
         }
+
         return $this->events;
     }
 
@@ -547,7 +567,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             $data = array();
             /**@var $listener Enlight_Event_Handler_Default */
             foreach ($listeners as $listener) {
-
                 $temp = $listener->getListener();
                 if (is_array($temp)) {
                     $class = get_class($temp[0]);
@@ -629,12 +648,14 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                 'time' => number_format($query->getElapsedSecs(), 5)
             );
         }
+
         return $queries;
     }
 
     /**
      * Internal helper function which returns all traced doctrine queries
      * which executed over the Shopware()->Models() manager.
+     *
      * @return array
      */
     private function getDoctrineQueries()
@@ -658,11 +679,13 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                 'time' => number_format($query['executionMS'], 5)
             );
         }
+
         return $queries;
     }
 
     /**
      * Converted function to get a small sql path of the original sql statement.
+     *
      * @param $sql
      * @return string
      */
@@ -686,6 +709,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
     private function getQuerySql($sql)
     {
         $sql = trim(preg_replace('/\s+/', ' ', $sql));
+
         return $sql;
     }
 
@@ -748,6 +772,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Helper function to get the sql explain of the passed sql query.
+     *
      * @param $sql
      * @param $params
      * @return array|string
@@ -760,6 +785,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                 $prepared[] = $param;
             }
             $result = Shopware()->Db()->fetchAll('EXPLAIN ' . $sql, $prepared);
+
             return $result;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -768,6 +794,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
 
     /**
      * Global function to format an sql string.
+     *
      * @param $sql
      * @return String
      */
@@ -780,6 +807,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
     /**
      * Event listener function of the GetPhpInfo controller action of the
      * detail controller.
+     *
      * @param Enlight_Event_EventArgs $arguments
      */
     public function onGetPhpInfo(Enlight_Event_EventArgs $arguments)
@@ -801,6 +829,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
     /**
      * Event listener function of the ClearCache action which called
      * over the profiling plugin if the user clicks on the right toolbar button.
+     *
      * @param Enlight_Event_EventArgs $arguments
      */
     public function onClearCache(Enlight_Event_EventArgs $arguments)
@@ -830,9 +859,13 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
      */
     protected function clearConfigCache()
     {
-        Shopware()->Cache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, array(
-            'Shopware_Config', 'Shopware_Plugin'
-        ));
+        Shopware()->Cache()->clean(
+            Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+            array(
+                'Shopware_Config',
+                'Shopware_Plugin'
+            )
+        );
     }
 
     /**
@@ -890,15 +923,16 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             return true;
         }
 
-        $proxyUrl = $request->getScheme() . '://'
-            . $request->getHttpHost()
-            . $request->getBaseUrl() . '/';
+        $proxyUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBaseUrl() . '/';
 
         try {
-            $client = new Zend_Http_Client(null, array(
-                'useragent' => 'Shopware/' . Shopware()->Config()->version,
-                'timeout' => 5,
-            ));
+            $client = new Zend_Http_Client(
+                null,
+                array(
+                    'useragent' => 'Shopware/' . Shopware()->Config()->version,
+                    'timeout' => 5,
+                )
+            );
             $client->setUri($proxyUrl)->request('BAN');
         } catch (Exception $e) {
             return false;
@@ -930,7 +964,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
      */
     protected function clearRewriteCache()
     {
-        $cache = (int)Shopware()->Config()->routerCache;
+        $cache = (int) Shopware()->Config()->routerCache;
         $cache = $cache < 360 ? 86400 : $cache;
 
         $sql = "SELECT `id` FROM `s_core_config_elements` WHERE `name` LIKE 'routerlastupdate'";
@@ -956,4 +990,3 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         }
     }
 }
- 
