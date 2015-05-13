@@ -168,7 +168,7 @@ class EventManager extends Enlight_Event_EventManager
      */
     public function registerListener(Enlight_Event_Handler $handler)
     {
-        return $this->events->registerListener($handler);
+        return parent::registerListener($handler);
     }
 
     /**
