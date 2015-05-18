@@ -144,7 +144,7 @@
             $('.array-wrapper .btn.toggle').bind('click', function () {
                 var $this = $(this),
                     item = $this.parents('.item.array'),
-                    detail = item.find('.array-wrapper');
+                    detail = $(item[0]).find('.array-wrapper');
 
                 var first = $(detail[0]);
                 if (first.hasClass('collapsed')) {
