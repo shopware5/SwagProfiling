@@ -42,7 +42,7 @@ class EventManager extends Enlight_Event_EventManager
             $eventArgs
         );
 
-        return parent::notify($event, $eventArgs);
+        return $this->events->notify($event, $eventArgs);
     }
 
     /**
@@ -70,7 +70,7 @@ class EventManager extends Enlight_Event_EventManager
             $eventArgs
         );
 
-        return parent::filter($event, $value, $eventArgs);
+        return $this->events->filter($event, $value, $eventArgs);
     }
 
     /**
@@ -88,7 +88,7 @@ class EventManager extends Enlight_Event_EventManager
             $eventArgs
         );
 
-        return parent::notifyUntil($event, $eventArgs);
+        return $this->events->notifyUntil($event, $eventArgs);
     }
 
     /**
@@ -103,7 +103,7 @@ class EventManager extends Enlight_Event_EventManager
             $this->registerListener($additionalEventListener);
         }
 
-        return parent::getListeners($event);
+        return $this->events->getListeners($event);
     }
 
     /**
@@ -168,7 +168,7 @@ class EventManager extends Enlight_Event_EventManager
      */
     public function registerListener(Enlight_Event_Handler $handler)
     {
-        return parent::registerListener($handler);
+        return $this->events->registerListener($handler);
     }
 
     /**

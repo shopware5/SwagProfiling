@@ -576,7 +576,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                     $class = $listener->Plugin()->getClassName();
                     $function = $listener->getListener();
                 }
-                if ($class === 'Shopware_Plugins_Frontend_Profiling_Bootstrap') {
+                if ($class === 'Shopware_Plugins_Frontend_SwagProfiling_Bootstrap') {
                     continue;
                 }
 
