@@ -133,11 +133,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
      */
     public function install()
     {
-        $form = $this->Form();
-        /* @var Form $parent */
-        $parent = $this->Forms()->findOneBy(array('name' => 'Core'));
-        $form->setParent($parent);
-        $form->setElement('text', 'ipLimitation', array('label' => 'Auf IP beschränken', 'value' => ''));
+        $this->initForm();
 
         $this->subscribeEvent(
             'Enlight_Controller_Action_Frontend_Detail_GetPhpInfo',
@@ -167,6 +163,31 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         );
 
         return true;
+    }
+
+    private function initForm()
+    {
+        $form = $this->Form();
+        /* @var Form $parent */
+        $parent = $this->Forms()->findOneBy(array('name' => 'Core'));
+
+        $form->setParent($parent);
+        $form->setElement(
+            'text',
+            'ipLimitation',
+            array(
+                'label' => 'Auf IP beschränken',
+                'value' => ''
+        ));
+
+        $form->setElement(
+            'boolean',
+            'show_queries',
+            array(
+                'label' => 'Queries anzeigen',
+                'value' => 1,
+                'description' => 'Durch die Query-Ausgabe kann ein "memory limit" Fehler ausgelöst werden. Sollte dies der Fall sein, deaktivieren Sie einfach diese Option.',
+        ));
     }
 
     /**
@@ -254,9 +275,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
      */
     private function getProfiling(Enlight_Event_EventArgs $arguments)
     {
-        $sqlQueries = $this->getSqlQueries();
-        $doctrineQueries = $this->getDoctrineQueries();
-        $queries = array_merge($sqlQueries, $doctrineQueries);
+        $showQueries = $this->Config()->show_queries;
         $events = $this->getEvents();
         $exceptions = Shopware()->Front()->Response()->getException();
         $loader = $this->Application()->Loader();
@@ -268,7 +287,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             'session' => $this->getSessionData(),
             'cookies' => $_COOKIE,
             'config' => Shopware()->getOptions(),
-            'queries' => $queries,
             'events' => $events,
             'template' => $this->getTemplateData($arguments),
             'basket' => Shopware()->Modules()->Basket()->sGetBasket(),
@@ -281,7 +299,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         $data['short'] = array(
             'config' => Shopware::VERSION,
             'request' => $data['request']['Controller'] . '::' . $data['request']['Action'],
-            'queryCount' => count($queries),
             'queryTime' => round($this->sqlTime, 6),
             'slowQueries' => $this->slowQueryCounter,
             'sessionId' => Shopware()->SessionID(),
@@ -293,6 +310,16 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             'memory' => memory_get_usage() / 1024 / 1024,
             'templates' => count($data['template']['Loaded templates'])
         );
+
+        if($showQueries) {
+            $sqlQueries = $this->getSqlQueries();
+            $doctrineQueries = $this->getDoctrineQueries();
+            $queries = array_merge($sqlQueries, $doctrineQueries);
+
+            $data['queries'] = $queries;
+            $data['short']['queryCount'] = count($queries);
+
+        }
 
         return $data;
     }
