@@ -12,7 +12,11 @@
                 <li class="session"><a href="#session">Session</a></li>
                 <li class="template"><a href="#template">Template</a></li>
                 <li class="events"><a href="#events">Events</a></li>
-                <li class="queries"><a href="#queries">Queries</a></li>
+
+                {if $profiling.queries}
+                    <li class="queries"><a href="#queries">Queries</a></li>
+                {/if}
+
                 <li class="emails"><a href="#emails">Emails</a></li>
                 <li class="dev-basket"><a href="#dev-basket">Basket</a></li>
                 <li class="cache"><a href="#cache">Cache</a></li>

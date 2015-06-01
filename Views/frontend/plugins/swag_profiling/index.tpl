@@ -23,8 +23,12 @@
         <span class="spacer"></span>
         <div class="events bar-element"><span class="element-content">{$profiling.short.eventCount}x Events / {$profiling.short.listenerCount}x Listeners</span></div>
         <span class="spacer"></span>
+
+        {if $profiling.queries}
         <div class="queries bar-element"><span class="element-content">{$profiling.short.queryCount} ({$profiling.short.queryTime} ms) > {$profiling.short.slowQueries}</span></div>
         <span class="spacer"></span>
+        {/if}
+
         <div class="emails bar-element"><span class="element-content">{$profiling.short.mails} Mails</span></div>
         <span class="spacer"></span>
         <div class="cache bar-element"><span class="element-content">{$profiling.short.cacheFiles}x Cached files</span></div>
