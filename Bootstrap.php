@@ -178,7 +178,8 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             array(
                 'label' => 'Auf IP beschränken',
                 'value' => ''
-        ));
+            )
+        );
 
         $form->setElement(
             'boolean',
@@ -187,7 +188,8 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
                 'label' => 'Queries anzeigen',
                 'value' => 1,
                 'description' => 'Durch die Query-Ausgabe kann ein "memory limit" Fehler ausgelöst werden. Sollte dies der Fall sein, deaktivieren Sie einfach diese Option.',
-        ));
+            )
+        );
     }
 
     /**
@@ -311,7 +313,7 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
             'templates' => count($data['template']['Loaded templates'])
         );
 
-        if($showQueries) {
+        if ($showQueries) {
             $sqlQueries = $this->getSqlQueries();
             $doctrineQueries = $this->getDoctrineQueries();
             $queries = array_merge($sqlQueries, $doctrineQueries);

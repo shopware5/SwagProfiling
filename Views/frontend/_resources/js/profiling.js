@@ -51,7 +51,6 @@
         return item;
     }
 
-
     function isFunction(functionToCheck) {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
@@ -59,7 +58,8 @@
 
 })(jQuery);
 
-/* Add class to the searchfield */ (function ($) {
+/* Add class to the searchfield */
+(function ($) {
     $(document).ready(function () {
         $('.developer-bar .bar-element').bind('click', function () {
             $('#header').toggle();
@@ -81,7 +81,8 @@
 
     });
 
-    /* Add class to the searchfield */ (function ($) {
+    /* Add class to the searchfield */
+    (function ($) {
         $(document).ready(function () {
             $('.developer-bar-details table .toggle').bind('click', function () {
                 var $this = $(this),
@@ -180,7 +181,7 @@
                 $(li).addClass('active');
 
                 currentContent.fadeOut('fast', function () {
-                    newActive.fadeIn('fast', function() {
+                    newActive.fadeIn('fast', function () {
 
                         try { // Set PHP info frame to correct height
                             var frame = document.getElementById('phpFrame'),
