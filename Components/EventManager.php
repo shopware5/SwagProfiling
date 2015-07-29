@@ -139,6 +139,13 @@ class EventManager extends Enlight_Event_EventManager
      */
     public function collect($event, ArrayCollection $collection, $eventArgs = null)
     {
+        $this->getPluginBootstrap()->addEvent(
+            $event,
+            'collect',
+            $this->getListeners($event),
+            $eventArgs
+        );
+
         return $this->events->collect($event, $collection, $eventArgs);
     }
 
