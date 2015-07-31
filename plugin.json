@@ -7,19 +7,24 @@
     "license": "proprietary",
     "link": "http://store.shopware.com",
     "author": "shopware AG",
-    "currentVersion": "1.0.3",
+
+    "currentVersion": "1.0.4",
+
     "changelog": {
         "de": {
+            "1.0.4": "PT-3234 - Bugfix: Speicherprobleme;",
             "1.0.3": "PT-2976, PT-3083 - Bugfix: Kompatibilität zu anderen Plugins verbessert;",
             "1.0.2": "PT-2932 - Feature: Shopware 5 Kompatibilität;",
             "1.0.1": "Kompatibilität mit Shopware 4.2;"
         },
         "en": {
+            "1.0.4": "PT-3234 - Bugfix: Memory problems;",
             "1.0.3": "PT-2976, PT-3083 - Bugfix: Improved compatibility with other plugins;",
             "1.0.2": "PT-2932 - Feature: Shopware 5 compatibility;",
             "1.0.1": "Add compatibility with shopware 4.2;"
         }
     },
+
     "compatibility": {
         "minimumVersion": "4.1.0",
         "maximumVersion": null,
