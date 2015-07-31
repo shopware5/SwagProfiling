@@ -26,6 +26,7 @@ use Shopware\Models\Config\Form;
 
 require_once(__DIR__ . '/Components/SqlFormatter.php');
 require_once(__DIR__ . '/Components/EventManager.php');
+require_once(__DIR__ . '/Components/QueryProfiler.php');
 
 /**
  * Class Shopware_Plugins_Frontend_Profiling_Bootstrap
@@ -223,11 +224,14 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         $profiler = new Zend_Db_Profiler(true);
         Shopware()->Db()->setProfiler($profiler);
 
-        //enable doctrine query logging
-        Shopware()->Models();
-        $logger = new \Doctrine\DBAL\Logging\DebugStack();
-        $logger->enabled = true;
-        Shopware()->Models()->getConfiguration()->setSQLLogger($logger);
+        $showQueries = $this->Config()->show_queries;
+        if ($showQueries) {
+            //enable doctrine query logging
+            Shopware()->Models();
+            $logger = new \Doctrine\DBAL\Logging\DebugStack();
+            $logger->enabled = true;
+            Shopware()->Models()->getConfiguration()->setSQLLogger($logger);
+        }
 
         //enable event logging
         Shopware()->setEventManager(new EventManager($this->Application()->Events()));
@@ -267,7 +271,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         $this->preventEventLog = false;
     }
 
-
     /**
      * Internal helper function to get all profiled data.
      * This function is used from the onDisplayProfiling function.
@@ -280,8 +283,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         $showQueries = $this->Config()->show_queries;
         $events = $this->getEvents();
         $exceptions = Shopware()->Front()->Response()->getException();
-        $loader = $this->Application()->Loader();
-        $classMap = Shopware()->Hooks()->getProxyFactory()->getProxyDir() . 'ClassMap_' . \Shopware::REVISION . '.php';
 
         $data = array(
             'request' => $this->getRequestData(),
@@ -314,13 +315,14 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         );
 
         if ($showQueries) {
-            $sqlQueries = $this->getSqlQueries();
-            $doctrineQueries = $this->getDoctrineQueries();
+            $queryComponent = new QueryProfiler();
+
+            $sqlQueries = $queryComponent->getSqlQueries();
+            $doctrineQueries = $queryComponent->getDoctrineQueries();
             $queries = array_merge($sqlQueries, $doctrineQueries);
 
             $data['queries'] = $queries;
             $data['short']['queryCount'] = count($queries);
-
         }
 
         return $data;
@@ -529,7 +531,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         );
     }
 
-
     /**
      * Helper function to add two new event listeners for the passed
      * event. This is used to log all fired request events.
@@ -647,192 +648,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         }
     }
 
-
-    /**
-     * Internal helper function which returns all traced plain sql queries
-     * which executed over the Shopware()->Db() object.
-     *
-     * @return array
-     */
-    private function getSqlQueries()
-    {
-        $profiler = Shopware()->Db()->getProfiler();
-        $queries = array();
-        /**@var $query Zend_Db_Profiler_Query* */
-        foreach ($profiler->getQueryProfiles() as $query) {
-            $explain = $this->getSqlExplain($query->getQuery(), $query->getQueryParams());
-            $sql = $this->getQuerySql($query->getQuery());
-
-            if (strpos($sql, '-- IGNORE PROFILING') !== false) {
-                continue;
-            }
-            $this->sqlTime += $query->getElapsedSecs();
-
-            $queries[] = array(
-                'sql' => SqlFormatter::format($sql),
-                'short' => $this->getShortSql($sql),
-                'explain' => $explain,
-                'status' => $this->getQueryStatus($explain),
-                'params' => $query->getQueryParams(),
-                'time' => number_format($query->getElapsedSecs(), 5)
-            );
-        }
-
-        return $queries;
-    }
-
-    /**
-     * Internal helper function which returns all traced doctrine queries
-     * which executed over the Shopware()->Models() manager.
-     *
-     * @return array
-     */
-    private function getDoctrineQueries()
-    {
-        $queries = array();
-
-        /**@var $logger \Doctrine\DBAL\Logging\DebugStack */
-        $logger = Shopware()->Models()->getConfiguration()->getSQLLogger();
-        foreach ($logger->queries as $query) {
-            $explain = $this->getSqlExplain($query['sql'], $query['params']);
-            $sql = $this->getQuerySql($query['sql']);
-
-            $this->sqlTime += $query['executionMS'];
-
-            $queries[] = array(
-                'sql' => SqlFormatter::format($sql),
-                'short' => $this->getShortSql($sql),
-                'explain' => $explain,
-                'status' => $this->getQueryStatus($explain),
-                'params' => $query['params'],
-                'time' => number_format($query['executionMS'], 5)
-            );
-        }
-
-        return $queries;
-    }
-
-    /**
-     * Converted function to get a small sql path of the original sql statement.
-     *
-     * @param $sql
-     * @return string
-     */
-    private function getShortSql($sql)
-    {
-        $fromPos = strrpos($sql, 'FROM');
-        if ($fromPos !== false) {
-            return substr($sql, 0, 40) . ' ... <br>' . substr($sql, $fromPos, 80);
-        } else {
-            return substr($sql, 0, 120);
-        }
-    }
-
-    /**
-     * Converted function which prepares a sql string.
-     * This functions trims all line feats and replace them with a space.
-     *
-     * @param $sql
-     * @return string
-     */
-    private function getQuerySql($sql)
-    {
-        $sql = trim(preg_replace('/\s+/', ' ', $sql));
-
-        return $sql;
-    }
-
-    /**
-     * Helper function to get a specify sql status for a single
-     * query. This function expects the sql explain result of a single query.
-     * This function sets the following query status:
-     *  - Error   => The explain contains a temporary table or an file sort.
-     *  - Warning => The explain selects more than 100 rows for one table or use the select type "ALL"
-     *
-     * @param $explain
-     * @return array
-     */
-    private function getQueryStatus($explain)
-    {
-        if (!is_array($explain)) {
-            return array(
-                'cls' => 'query-error',
-                'notices' => array()
-            );
-        }
-        $useTemporary = false;
-        $useFileSort = false;
-        $useManyRows = false;
-        $useAllSelect = false;
-        $notices = array();
-        $cls = 'query-success';
-        foreach ($explain as $row) {
-            $extra = $row['Extra'];
-            if (strpos($extra, 'filesort') !== false) {
-                $useFileSort = true;
-                $notices[] = 'Table: ' . $row['table'] . ' using <b>file sort</b>';
-            }
-            if (strpos($extra, 'temporary') !== false) {
-                $useTemporary = true;
-                $notices[] = 'Table: ' . $row['table'] . ' using <b>temporary</b> table';
-            }
-            if ($row['rows'] > 100) {
-                $useManyRows = true;
-                $notices[] = 'Table: ' . $row['table'] . ' more than <b>100 rows</b>';
-            }
-            if ($row['type'] == 'ALL') {
-                $useAllSelect = true;
-                $notices[] = 'Table: ' . $row['table'] . ' select <b>ALL</b>';
-            }
-        }
-        if ($useAllSelect || $useManyRows) {
-            $cls = 'query-warning';
-        }
-        if ($useTemporary || $useFileSort) {
-            $cls = 'query-error';
-            $this->slowQueryCounter++;
-        }
-
-        return array(
-            'cls' => $cls,
-            'notices' => $notices
-        );
-    }
-
-    /**
-     * Helper function to get the sql explain of the passed sql query.
-     *
-     * @param $sql
-     * @param $params
-     * @return array|string
-     */
-    private function getSqlExplain($sql, $params)
-    {
-        try {
-            $prepared = array();
-            foreach ($params as $param) {
-                $prepared[] = $param;
-            }
-            $result = Shopware()->Db()->fetchAll('EXPLAIN ' . $sql, $prepared);
-
-            return $result;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
-     * Global function to format an sql string.
-     *
-     * @param $sql
-     * @return String
-     */
-    public function formatSql($sql)
-    {
-        return SqlFormatter::format($sql);
-    }
-
-
     /**
      * Event listener function of the GetPhpInfo controller action of the
      * detail controller.
@@ -853,7 +668,6 @@ class Shopware_Plugins_Frontend_SwagProfiling_Bootstrap extends Shopware_Compone
         echo phpinfo();
         exit();
     }
-
 
     /**
      * Event listener function of the ClearCache action which called

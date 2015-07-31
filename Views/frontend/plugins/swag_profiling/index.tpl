@@ -2,7 +2,7 @@
     <link type="text/css" media="all" rel="stylesheet" href="{link file='frontend/_resources/css/profiling.css'}" />
 {/block}
 
-{block name="frontend_index_header_javascript" append}
+{block name="frontend_index_header_javascript_jquery" append}
     <script src="{link file='frontend/_resources/js/beautify.js'}"></script>
     <script src="{link file='frontend/_resources/js/profiling.js'}"></script>
 {/block}

@@ -10,6 +10,8 @@ class EventManager extends Enlight_Event_EventManager
      */
     private $events;
 
+    private $registeredEvents = array();
+
     /**
      * @return \Shopware_Plugins_Frontend_SwagProfiling_Bootstrap
      */
@@ -97,10 +99,13 @@ class EventManager extends Enlight_Event_EventManager
      */
     public function getListeners($event)
     {
-        $additionalEventListeners = $this->getPluginBootstrap()->getAdditionalListeners($event);
+        if (!$this->registeredEvents[$event]) {
+            $this->registeredEvents[$event] = $event;
 
-        foreach ($additionalEventListeners as $additionalEventListener) {
-            $this->registerListener($additionalEventListener);
+            $additionalEventListeners = $this->getPluginBootstrap()->getAdditionalListeners($event);
+            foreach ($additionalEventListeners as $additionalEventListener) {
+                $this->registerListener($additionalEventListener);
+            }
         }
 
         return $this->events->getListeners($event);
@@ -134,6 +139,13 @@ class EventManager extends Enlight_Event_EventManager
      */
     public function collect($event, ArrayCollection $collection, $eventArgs = null)
     {
+        $this->getPluginBootstrap()->addEvent(
+            $event,
+            'collect',
+            $this->getListeners($event),
+            $eventArgs
+        );
+
         return $this->events->collect($event, $collection, $eventArgs);
     }
 
