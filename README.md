@@ -1,4 +1,8 @@
 # SwagProfiling
+
+## Supported versions
+Shopware version 4.1.0 to 5.1.1
+
 ## Description
 This free toolbar is a must-have for all developers working with Shopware. This plugin displays information in the frontend, which would otherwise have to be searched for in the backend (i.e. a chronological display or all Smarty variables or triggered events).
 
