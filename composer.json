@@ -1,0 +1,14 @@
+{
+  "name": "shopwareLabs/SwagProfiling",
+  "type": "shopware-frontend-plugin",
+  "description": "Adds developer-toolbar to Shopware-frontend",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ShopwareLabs"
+    }
+  ],
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}
